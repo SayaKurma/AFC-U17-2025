@@ -213,6 +213,24 @@ const matches = [
         team2: { name: 'Yaman', flag: 'https://flagcdn.com/w20/ye.png', score: 0 },
         location: 'Stadion Kota Olahraga Raja Abdullah, Jeddah',
         details: '<strong>Korea Selatan:</strong> Kim Eun-Seong (29\')<br><strong>Yaman:</strong> -'
+    },
+    {
+        id: 'match23',
+        group: 'Grup D',
+        date: '11 April',
+        team1: { name: 'Iran', flag: 'https://flagcdn.com/w20/ir.png', score: 1 },
+        team2: { name: 'Tajikistan', flag: 'https://flagcdn.com/w20/tj.png', score: 3 },
+        location: 'Stadion Pangeran Abdullah al-Faisal, Jeddah',
+        details: '<strong>Iran:</strong> Omid Gharahchomaghloo (52\')<br><strong>Tajikistan:</strong> Mekhrubon Odilzoda (12\'), Akhmadchon Shoev (67\'), Abdullo Ibragimzoda (89\')'
+    },
+    {
+        id: 'match24',
+        group: 'Grup D',
+        date: '11 April',
+        team1: { name: 'Oman', flag: 'https://flagcdn.com/w20/om.png', score: 2 },
+        team2: { name: 'Korea Utara', flag: 'https://flagcdn.com/w20/kp.png', score: 2 },
+        location: 'Stadion Kota Olahraga Raja Abdullah, Jeddah',
+        details: '<strong>Oman:</strong> Osama Al-Mamari (65\'), Alwalid Salam (90+8\')<br><strong>Korea Utara:</strong> Kim Yu-Jin (10\'), Ri Kang-Rim (74\')'
     }
 ];
 
@@ -289,7 +307,6 @@ function calculateStandings() {
         ]
     };
 
-    // Hitung statistik dasar (main, menang, seri, kalah, gol masuk, gol kebobolan, poin)
     matches.forEach(match => {
         const group = groups[match.group];
         const team1 = group.find(t => t.name === match.team1.name);
@@ -327,7 +344,6 @@ function calculateStandings() {
             h2hMatches: 0
         }));
 
-        // Hitung statistik head-to-head
         groupMatches.forEach(match => {
             const team1 = h2hStandings.find(t => t.name === match.team1.name);
             const team2 = h2hStandings.find(t => t.name === match.team2.name);
@@ -352,18 +368,12 @@ function calculateStandings() {
         });
 
         return h2hStandings.sort((a, b) => {
-            // Prioritas 1: Poin head-to-head
             if (b.h2hPts !== a.h2hPts) return b.h2hPts - a.h2hPts;
-
-            // Prioritas 2: Selisih gol head-to-head
             const h2hGdA = a.h2hGm - a.h2hGk;
             const h2hGdB = b.h2hGm - b.h2hGk;
             if (h2hGdB !== h2hGdA) return h2hGdB - h2hGdA;
-
-            // Prioritas 3: Gol dicetak head-to-head
             if (b.h2hGm !== a.h2hGm) return b.h2hGm - a.h2hGm;
 
-            // Prioritas 4: Hasil pertandingan langsung antar tim yang imbang
             const directMatch = groupMatches.find(m =>
                 (m.team1.name === a.name && m.team2.name === b.name) ||
                 (m.team1.name === b.name && m.team2.name === a.name)
@@ -378,7 +388,6 @@ function calculateStandings() {
                 }
             }
 
-            // Prioritas 5: Selisih gol keseluruhan
             const gdA = a.gm - a.gk;
             const gdB = b.gm - b.gk;
             return gdB - gdA;
@@ -388,8 +397,8 @@ function calculateStandings() {
     Object.keys(groups).forEach(groupName => {
         const groupMatches = matches.filter(m => m.group === groupName);
         let teams = groups[groupName];
-
         const pointsMap = {};
+
         teams.forEach(team => {
             if (!pointsMap[team.pts]) pointsMap[team.pts] = [];
             pointsMap[team.pts].push(team);
@@ -398,13 +407,11 @@ function calculateStandings() {
         const sortedTeams = [];
         Object.keys(pointsMap).sort((a, b) => b - a).forEach(pts => {
             const teamsWithSamePoints = pointsMap[pts];
-
             if (teamsWithSamePoints.length > 1) {
                 const h2hMatches = groupMatches.filter(m =>
                     teamsWithSamePoints.some(t => t.name === m.team1.name) &&
                     teamsWithSamePoints.some(t => t.name === m.team2.name)
                 );
-
                 const h2hSorted = calculateHeadToHeadStandings(teamsWithSamePoints, h2hMatches);
                 sortedTeams.push(...h2hSorted);
             } else {
@@ -492,6 +499,7 @@ const topscorers = [
     { name: 'Fadly Alberto', team: 'Indonesia', flag: 'https://flagcdn.com/w20/id.png', goals: 2 },
     { name: 'Kim Eun-Seong', team: 'Korea Selatan', flag: 'https://flagcdn.com/w20/kr.png', goals: 3 },
     { name: 'Pak Kwang-Song', team: 'Korea Utara', flag: 'https://flagcdn.com/w20/kp.png', goals: 2 },
+    { name: 'Ri Kang-Rim', team: 'Korea Utara', flag: 'https://flagcdn.com/w20/kp.png', goals: 2 },
     { name: 'Sadriddin Khasanov', team: 'Uzbekistan', flag: 'https://flagcdn.com/w20/uz.png', goals: 2 },
     { name: 'Jamshidbek Rustamov', team: 'Uzbekistan', flag: 'https://flagcdn.com/w20/uz.png', goals: 2 },
     { name: 'Mohammed Al-Garash', team: 'Yaman', flag: 'https://flagcdn.com/w20/ye.png', goals: 2 },
