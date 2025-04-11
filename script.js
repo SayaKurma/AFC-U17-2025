@@ -347,7 +347,6 @@ function calculateStandings() {
         groupMatches.forEach(match => {
             const team1 = h2hStandings.find(t => t.name === match.team1.name);
             const team2 = h2hStandings.find(t => t.name === match.team2.name);
-
             if (team1 && team2) {
                 team1.h2hMatches += 1;
                 team2.h2hMatches += 1;
@@ -355,7 +354,6 @@ function calculateStandings() {
                 team1.h2hGk += match.team2.score;
                 team2.h2hGm += match.team2.score;
                 team2.h2hGk += match.team1.score;
-
                 if (match.team1.score > match.team2.score) {
                     team1.h2hPts += 3;
                 } else if (match.team1.score < match.team2.score) {
@@ -373,12 +371,10 @@ function calculateStandings() {
             const h2hGdB = b.h2hGm - b.h2hGk;
             if (h2hGdB !== h2hGdA) return h2hGdB - h2hGdA;
             if (b.h2hGm !== a.h2hGm) return b.h2hGm - a.h2hGm;
-
             const directMatch = groupMatches.find(m =>
                 (m.team1.name === a.name && m.team2.name === b.name) ||
                 (m.team1.name === b.name && m.team2.name === a.name)
             );
-
             if (directMatch) {
                 const teamAIsTeam1 = directMatch.team1.name === a.name;
                 const scoreA = teamAIsTeam1 ? directMatch.team1.score : directMatch.team2.score;
@@ -387,7 +383,6 @@ function calculateStandings() {
                     return scoreB - scoreA;
                 }
             }
-
             const gdA = a.gm - a.gk;
             const gdB = b.gm - b.gk;
             return gdB - gdA;
@@ -398,12 +393,10 @@ function calculateStandings() {
         const groupMatches = matches.filter(m => m.group === groupName);
         let teams = groups[groupName];
         const pointsMap = {};
-
         teams.forEach(team => {
             if (!pointsMap[team.pts]) pointsMap[team.pts] = [];
             pointsMap[team.pts].push(team);
         });
-
         const sortedTeams = [];
         Object.keys(pointsMap).sort((a, b) => b - a).forEach(pts => {
             const teamsWithSamePoints = pointsMap[pts];
@@ -418,7 +411,6 @@ function calculateStandings() {
                 sortedTeams.push(...teamsWithSamePoints);
             }
         });
-
         groups[groupName] = sortedTeams;
     });
 
@@ -431,7 +423,17 @@ function generateGroupTable(groupName, teams) {
             <div class="bg-blue-800 text-white py-3 px-4 font-bold"><h3 class="text-xl">${groupName}</h3></div>
             <div class="p-4">
                 <table class="w-full">
-                    <thead><tr class="text-left text-xs text-gray-600 border-b"><th class="pb-2">Tim</th><th class="pb-2 text-center">P</th><th class="pb-2 text-center">M</th><th class="pb-2 text-center">S</th><th class="pb-2 text-center">K</th><th class="pb-2 text-center">SG</th><th class="pb-2 text-center">Pts</th></tr></thead>
+                    <thead>
+                        <tr class="text-left text-xs text-gray-600 border-b">
+                            <th class="pb-2">Tim</th>
+                            <th class="pb-2 text-center">P</th>
+                            <th class="pb-2 text-center">M</th>
+                            <th class="pb-2 text-center">S</th>
+                            <th class="pb-2 text-center">K</th>
+                            <th class="pb-2 text-center">SG</th>
+                            <th class="pb-2 text-center">Pts</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         ${teams.map((team, index) => `
                             <tr class="${index < 2 ? 'qualified' : ''}">
@@ -459,34 +461,35 @@ function displayGroupTables() {
     ).join('');
 }
 
-function updateQuarterFinals() {  
-    const standings = calculateStandings();  
-    const quarterFinalMatches = [  
-      { placeholder1: 'Juara Grup A', placeholder2: 'Runner-up Grup B', index: 0 },
-      { placeholder1: 'Juara Grup C', placeholder2: 'Runner-up Grup D', index: 1 },  
-      { placeholder1: 'Juara Grup B', placeholder2: 'Runner-up Grup A', index: 2 },
-      { placeholder1: 'Juara Grup D', placeholder2: 'Runner-up Grup C', index: 3 }  
-    ];  
-    Object.keys(standings).forEach(groupName => {  
-      const teams = standings[groupName];  
-      const groupMatches = matches.filter(m => m.group === groupName).length;  
-      if (groupMatches === 6) {  
-        const winner = teams[0];  
-        const runnerUp = teams[1];  
-        quarterFinalMatches.forEach(match => {  
-          const knockoutMatches = document.querySelectorAll('.knockout-match');  
-          if (match.placeholder1 === `Juara ${groupName}`) {  
-            const matchElement = knockoutMatches[match.index].querySelectorAll('.flex')[0];  
-            matchElement.innerHTML = `<img src="${winner.flag}" class="flag-icon" alt="${winner.name}">${winner.name}`;  
-          }  
-          if (match.placeholder2 === `Runner-up ${groupName}`) {  
-            const matchElement = knockoutMatches[match.index].querySelectorAll('.flex')[1];  
-            matchElement.innerHTML = `<img src="${runnerUp.flag}" class="flag-icon" alt="${runnerUp.name}">${runnerUp.name}`;  
-          }  
-        });  
-      }  
-    });  
-  }
+function updateQuarterFinals() {
+    const standings = calculateStandings();
+    const quarterFinalMatches = [
+        { placeholder1: 'Juara Grup A', placeholder2: 'Runner-up Grup B', index: 0 },
+        { placeholder1: 'Juara Grup C', placeholder2: 'Runner-up Grup D', index: 1 },
+        { placeholder1: 'Juara Grup B', placeholder2: 'Runner-up Grup A', index: 2 },
+        { placeholder1: 'Juara Grup D', placeholder2: 'Runner-up Grup C', index: 3 }
+    ];
+
+    Object.keys(standings).forEach(groupName => {
+        const teams = standings[groupName];
+        const groupMatches = matches.filter(m => m.group === groupName).length;
+        if (groupMatches === 6) {
+            const winner = teams[0];
+            const runnerUp = teams[1];
+            quarterFinalMatches.forEach(match => {
+                const knockoutMatches = document.querySelectorAll('.knockout-match');
+                if (match.placeholder1 === `Juara ${groupName}`) {
+                    const matchElement = knockoutMatches[match.index].querySelectorAll('.flex')[0];
+                    matchElement.innerHTML = `<img src="${winner.flag}" class="flag-icon" alt="${winner.name}">${winner.name}`;
+                }
+                if (match.placeholder2 === `Runner-up ${groupName}`) {
+                    const matchElement = knockoutMatches[match.index].querySelectorAll('.flex')[1];
+                    matchElement.innerHTML = `<img src="${runnerUp.flag}" class="flag-icon" alt="${runnerUp.name}">${runnerUp.name}`;
+                }
+            });
+        }
+    });
+}
 
 const topscorers = [
     { name: 'Evandra Florasta', team: 'Indonesia', flag: 'https://flagcdn.com/w20/id.png', goals: 3 },
@@ -508,7 +511,12 @@ function generateTopscorersTable() {
     return `
         <table class="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow-md">
             <thead class="bg-gray-100">
-                <tr><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peringkat</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pemain</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tim</th><th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gol</th></tr>
+                <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Peringkat</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pemain</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tim</th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gol</th>
+                </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
                 ${topscorers.map((player, index) => `
