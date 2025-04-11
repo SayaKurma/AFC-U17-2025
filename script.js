@@ -289,6 +289,7 @@ function calculateStandings() {
         ]
     };
 
+    // Hitung statistik dasar (main, menang, seri, kalah, gol masuk, gol kebobolan, poin)
     matches.forEach(match => {
         const group = groups[match.group];
         const team1 = group.find(t => t.name === match.team1.name);
@@ -317,9 +318,76 @@ function calculateStandings() {
         }
     });
 
+    function calculateHeadToHeadStandings(teams, groupMatches) {
+        const h2hStandings = teams.map(team => ({
+            ...team,
+            h2hPts: 0,
+            h2hGm: 0,
+            h2hGk: 0,
+            h2hMatches: 0
+        }));
+
+        // Hitung statistik head-to-head
+        groupMatches.forEach(match => {
+            const team1 = h2hStandings.find(t => t.name === match.team1.name);
+            const team2 = h2hStandings.find(t => t.name === match.team2.name);
+
+            if (team1 && team2) {
+                team1.h2hMatches += 1;
+                team2.h2hMatches += 1;
+                team1.h2hGm += match.team1.score;
+                team1.h2hGk += match.team2.score;
+                team2.h2hGm += match.team2.score;
+                team2.h2hGk += match.team1.score;
+
+                if (match.team1.score > match.team2.score) {
+                    team1.h2hPts += 3;
+                } else if (match.team1.score < match.team2.score) {
+                    team2.h2hPts += 3;
+                } else {
+                    team1.h2hPts += 1;
+                    team2.h2hPts += 1;
+                }
+            }
+        });
+
+        return h2hStandings.sort((a, b) => {
+            // Prioritas 1: Poin head-to-head
+            if (b.h2hPts !== a.h2hPts) return b.h2hPts - a.h2hPts;
+
+            // Prioritas 2: Selisih gol head-to-head
+            const h2hGdA = a.h2hGm - a.h2hGk;
+            const h2hGdB = b.h2hGm - b.h2hGk;
+            if (h2hGdB !== h2hGdA) return h2hGdB - h2hGdA;
+
+            // Prioritas 3: Gol dicetak head-to-head
+            if (b.h2hGm !== a.h2hGm) return b.h2hGm - a.h2hGm;
+
+            // Prioritas 4: Hasil pertandingan langsung antar tim yang imbang
+            const directMatch = groupMatches.find(m =>
+                (m.team1.name === a.name && m.team2.name === b.name) ||
+                (m.team1.name === b.name && m.team2.name === a.name)
+            );
+
+            if (directMatch) {
+                const teamAIsTeam1 = directMatch.team1.name === a.name;
+                const scoreA = teamAIsTeam1 ? directMatch.team1.score : directMatch.team2.score;
+                const scoreB = teamAIsTeam1 ? directMatch.team2.score : directMatch.team1.score;
+                if (scoreA !== scoreB) {
+                    return scoreB - scoreA;
+                }
+            }
+
+            // Prioritas 5: Selisih gol keseluruhan
+            const gdA = a.gm - a.gk;
+            const gdB = b.gm - b.gk;
+            return gdB - gdA;
+        });
+    }
+
     Object.keys(groups).forEach(groupName => {
-        const teams = groups[groupName];
         const groupMatches = matches.filter(m => m.group === groupName);
+        let teams = groups[groupName];
 
         const pointsMap = {};
         teams.forEach(team => {
@@ -328,52 +396,17 @@ function calculateStandings() {
         });
 
         const sortedTeams = [];
-
         Object.keys(pointsMap).sort((a, b) => b - a).forEach(pts => {
             const teamsWithSamePoints = pointsMap[pts];
 
             if (teamsWithSamePoints.length > 1) {
-                const h2hStandings = teamsWithSamePoints.map(team => ({
-                    ...team,
-                    h2hPts: 0,
-                    h2hGm: 0,
-                    h2hGk: 0
-                }));
+                const h2hMatches = groupMatches.filter(m =>
+                    teamsWithSamePoints.some(t => t.name === m.team1.name) &&
+                    teamsWithSamePoints.some(t => t.name === m.team2.name)
+                );
 
-                groupMatches.forEach(match => {
-                    const team1 = h2hStandings.find(t => t.name === match.team1.name);
-                    const team2 = h2hStandings.find(t => t.name === match.team2.name);
-
-                    if (team1 && team2) {
-                        team1.h2hGm += match.team1.score;
-                        team1.h2hGk += match.team2.score;
-                        team2.h2hGm += match.team2.score;
-                        team2.h2hGk += match.team1.score;
-
-                        if (match.team1.score > match.team2.score) {
-                            team1.h2hPts += 3;
-                        } else if (match.team1.score < match.team2.score) {
-                            team2.h2hPts += 3;
-                        } else {
-                            team1.h2hPts += 1;
-                            team2.h2hPts += 1;
-                        }
-                    }
-                });
-
-                h2hStandings.sort((a, b) => {
-                    if (a.h2hPts !== b.h2hPts) return b.h2hPts - a.h2hPts;
-                    const h2hGdA = a.h2hGm - a.h2hGk;
-                    const h2hGdB = b.h2hGm - b.h2hGk;
-                    if (h2hGdA !== h2hGdB) return h2hGdB - h2hGdA;
-                    if (a.h2hGm !== b.h2hGm) return b.h2hGm - a.h2hGm;
-                    const gdA = a.gm - a.gk;
-                    const gdB = b.gm - b.gk;
-                    if (gdA !== gdB) return gdB - gdA;
-                    return b.gm - a.gm;
-                });
-
-                sortedTeams.push(...h2hStandings);
+                const h2hSorted = calculateHeadToHeadStandings(teamsWithSamePoints, h2hMatches);
+                sortedTeams.push(...h2hSorted);
             } else {
                 sortedTeams.push(...teamsWithSamePoints);
             }
