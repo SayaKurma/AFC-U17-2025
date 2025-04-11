@@ -459,37 +459,34 @@ function displayGroupTables() {
     ).join('');
 }
 
-function updateQuarterFinals() {
-    const standings = calculateStandings();
-    const quarterFinalMatches = [
-        { placeholder1: 'Juara Grup A', placeholder2: 'Runner-up Grup B', index: 0 },
-        { placeholder1: 'Juara Grup B', placeholder2: 'Runner-up Grup A', index: 1 },
-        { placeholder1: 'Juara Grup C', placeholder2: 'Runner-up Grup D', index: 2 },
-        { placeholder1: 'Juara Grup D', placeholder2: 'Runner-up Grup C', index: 3 }
-    ];
-
-    Object.keys(standings).forEach(groupName => {
-        const teams = standings[groupName];
-        const groupMatches = matches.filter(m => m.group === groupName).length;
-
-        if (groupMatches === 6) {
-            const winner = teams[0];
-            const runnerUp = teams[1];
-
-            quarterFinalMatches.forEach(match => {
-                const knockoutMatches = document.querySelectorAll('.knockout-match');
-                if (match.placeholder1 === `Juara ${groupName}`) {
-                    const matchElement = knockoutMatches[match.index].querySelectorAll('.flex')[0];
-                    matchElement.innerHTML = `<img src="${winner.flag}" class="flag-icon" alt="${winner.name}">${winner.name}`;
-                }
-                if (match.placeholder2 === `Runner-up ${groupName}`) {
-                    const matchElement = knockoutMatches[match.index].querySelectorAll('.flex')[1];
-                    matchElement.innerHTML = `<img src="${runnerUp.flag}" class="flag-icon" alt="${runnerUp.name}">${runnerUp.name}`;
-                }
-            });
-        }
-    });
-}
+function updateQuarterFinals() {  
+    const standings = calculateStandings();  
+    const quarterFinalMatches = [  
+      { placeholder1: 'Juara Grup A', placeholder2: 'Runner-up Grup B', index: 0 },
+      { placeholder1: 'Juara Grup C', placeholder2: 'Runner-up Grup D', index: 1 },  
+      { placeholder1: 'Juara Grup B', placeholder2: 'Runner-up Grup A', index: 2 },
+      { placeholder1: 'Juara Grup D', placeholder2: 'Runner-up Grup C', index: 3 }  
+    ];  
+    Object.keys(standings).forEach(groupName => {  
+      const teams = standings[groupName];  
+      const groupMatches = matches.filter(m => m.group === groupName).length;  
+      if (groupMatches === 6) {  
+        const winner = teams[0];  
+        const runnerUp = teams[1];  
+        quarterFinalMatches.forEach(match => {  
+          const knockoutMatches = document.querySelectorAll('.knockout-match');  
+          if (match.placeholder1 === `Juara ${groupName}`) {  
+            const matchElement = knockoutMatches[match.index].querySelectorAll('.flex')[0];  
+            matchElement.innerHTML = `<img src="${winner.flag}" class="flag-icon" alt="${winner.name}">${winner.name}`;  
+          }  
+          if (match.placeholder2 === `Runner-up ${groupName}`) {  
+            const matchElement = knockoutMatches[match.index].querySelectorAll('.flex')[1];  
+            matchElement.innerHTML = `<img src="${runnerUp.flag}" class="flag-icon" alt="${runnerUp.name}">${runnerUp.name}`;  
+          }  
+        });  
+      }  
+    });  
+  }
 
 const topscorers = [
     { name: 'Evandra Florasta', team: 'Indonesia', flag: 'https://flagcdn.com/w20/id.png', goals: 3 },
