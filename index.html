@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Piala Asia U-17 AFC 2025</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header class="hero-gradient text-white shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <img src="https://logowik.com/content/uploads/images/afc-asian-football-confederation1877.jpg" alt="Logo AFC" class="h-12 mr-4">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold">Piala Asia U-17 AFC 2025</h1>
+                        <p class="text-sm md:text-base opacity-90">3-20 April, Arab Saudi</p>
+                    </div>
+                </div>
+                <div class="hidden md:flex space-x-4" id="nav-menu">
+                    <a href="#groups" class="px-3 py-2 rounded hover:bg-blue-700 transition">Fase Grup</a>
+                    <a href="#knockout" class="px-3 py-2 rounded hover:bg-blue-700 transition">Fase Gugur</a>
+                    <a href="#topscorers" class="px-3 py-2 rounded hover:bg-blue-700 transition">Pencetak Gol Terbanyak</a>
+                </div>
+                <button class="md:hidden text-2xl" id="hamburger">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            <div class="md:hidden mt-4 hidden" id="mobile-menu">
+                <a href="#groups" class="block px-3 py-2 rounded hover:bg-blue-700 transition">Fase Grup</a>
+                <a href="#knockout" class="block px-3 py-2 rounded hover:bg-blue-700 transition">Fase Gugur</a>
+                <a href="#topscorers" class="block px-3 py-2 rounded hover:bg-blue-700 transition">Pencetak Gol Terbanyak</a>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero-gradient text-white py-16">
+        <div class="container mx-auto px-4 text-center">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-4xl md:text-5xl font-bold mb-6">Bintang Masa Depan Sepak Bola Asia</h2>
+                <p class="text-xl mb-8">Saksikan generasi berikutnya dari bakat sepak bola saat 16 negara bersaing untuk kejayaan kontinental dan tempat di Piala Dunia U-17 FIFA 2025</p>
+                <div class="flex justify-center space-x-4">
+                    <a href="#groups" class="bg-white text-blue-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">Lihat Grup</a>
+                    <a href="#knockout" class="bg-transparent border-2 border-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-800 transition">Fase Gugur</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="bg-white py-8 shadow-sm">
+        <div class="container mx-auto px-4">
+            <div class="max-w-6xl mx-auto">
+                <h3 class="text-xl font-semibold text-blue-800 mb-6 text-center">Hasil Pertandingan Terbaru</h3>
+                <div id="recent-matches" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+                <div class="text-center mt-6">
+                    <button id="show-all-matches" class="text-blue-600 hover:text-blue-800 font-medium inline-flex items-center">
+                        Lihat Semua Hasil <i class="fas fa-chevron-right ml-2"></i>
+                    </button>
+                </div>
+                <div id="all-matches" class="hidden mt-8">
+                    <h3 class="text-xl font-semibold text-blue-800 mb-6 text-center">Seluruh Pertandingan</h3>
+                    <div id="all-matches-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="groups" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-900">Fase Grup</h2>
+            <p class="text-center max-w-3xl mx-auto mb-10 text-gray-700">Dua tim teratas dari setiap grup akan lolos ke fase gugur dan mengamankan tempat di Piala Dunia U-17 FIFA 2025.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="group-tables">
+                <!-- Tabel grup akan di-generate oleh JavaScript -->
+            </div>
+            <div class="mt-8 bg-green-50 border-l-4 border-green-500 p-4 max-w-4xl mx-auto">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-green-700">
+                            Tim yang disorot dengan warna hijau telah lolos ke fase gugur dan mengamankan tempat di Piala Dunia U-17 FIFA 2025.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="knockout" class="py-12 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-900">Fase Gugur</h2>
+            <div class="knockout-bracket flex flex-wrap justify-center">
+                <div class="knockout-round w-full md:w-1/4 px-4 mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-center bg-blue-100 py-2 rounded">Perempat Final</h3>
+                    <div class="space-y-6">
+                        <div class="knockout-match"><div class="bg-gray-50 p-3 rounded border"><div class="flex items-center mb-1"><span class="text-gray-400">Juara Grup A</span></div><div class="flex items-center"><span class="text-gray-400">Runner-up Grup B</span></div><div class="text-xs text-gray-500 mt-1">13 April, 17:00</div></div></div>
+                        <div class="knockout-match"><div class="bg-gray-50 p-3 rounded border"><div class="flex items-center mb-1"><span class="text-gray-400">Juara Grup B</span></div><div class="flex items-center"><span class="text-gray-400">Runner-up Grup A</span></div><div class="text-xs text-gray-500 mt-1">13 April, 20:15</div></div></div>
+                        <div class="knockout-match"><div class="bg-gray-50 p-3 rounded border"><div class="flex items-center mb-1"><span class="text-gray-400">Juara Grup C</span></div><div class="flex items-center"><span class="text-gray-400">Runner-up Grup D</span></div><div class="text-xs text-gray-500 mt-1">14 April, 17:00</div></div></div>
+                        <div class="knockout-match"><div class="bg-gray-50 p-3 rounded border"><div class="flex items-center mb-1"><span class="text-gray-400">Juara Grup D</span></div><div class="flex items-center"><span class="text-gray-400">Runner-up Grup C</span></div><div class="text-xs text-gray-500 mt-1">14 April, 20:15</div></div></div>
+                    </div>
+                </div>
+                <div class="knockout-round w-full md:w-1/4 px-4 mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-center bg-blue-100 py-2 rounded">Semifinal</h3>
+                    <div class="space-y-6">
+                        <div class="knockout-match"><div class="bg-gray-50 p-3 rounded border"><div class="flex items-center mb-1"><span class="text-gray-400">Pemenang PF1</span></div><div class="flex items-center"><span class="text-gray-400">Pemenang PF2</span></div><div class="text-xs text-gray-500 mt-1">17 April, 17:00</div></div></div>
+                        <div class="knockout-match"><div class="bg-gray-50 p-3 rounded border"><div class="flex items-center mb-1"><span class="text-gray-400">Pemenang PF3</span></div><div class="flex items-center"><span class="text-gray-400">Pemenang PF4</span></div><div class="text-xs text-gray-500 mt-1">17 April, 20:15</div></div></div>
+                    </div>
+                </div>
+                <div class="knockout-round w-full md:w-1/4 px-4 mb-8">
+                    <h3 class="text-xl font-semibold mb-4 text-center bg-blue-100 py-2 rounded">Final</h3>
+                    <div class="space-y-6">
+                        <div class="final-match"><div class="bg-gray-50 p-3 rounded border"><div class="flex items-center mb-1"><span class="text-gray-400">Pemenang SF1</span></div><div class="flex items-center"><span class="text-gray-400">Pemenang SF2</span></div><div class="text-xs text-gray-500 mt-1">20 April, 18:00</div></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="topscorers" class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-8 text-blue-900">Pencetak Gol Terbanyak</h2>
+            <div class="max-w-4xl mx-auto overflow-x-auto" id="topscorers-table">
+                <!-- Tabel pencetak gol akan di-generate oleh JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center">
+                        <img src="https://logowik.com/content/uploads/images/afc-asian-football-confederation1877.jpg" alt="Logo AFC" class="h-10 mr-3">
+                        <span class="text-xl font-bold">Piala Asia U-17 AFC 2025</span>
+                    </div>
+                    <p class="mt-2 text-gray-400 text-sm">Situs Pribadi</p>
+                </div>
+                <div class="flex space-x-6">
+                    <a href="https://m.facebook.com/AFCAsianCup/" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://x.com/afcasiancup?fbclid=PAY2xjawJhOAVleHRuA2FlbQIxMAABpwP-NjT7ynRq2bNSanS_Q2X02e7IzEYobFnlw6rVkJkQk9rn3joZBS--lr-i_aem_QkQYx0-LUDmZFXM1WtwSSg" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.instagram.com/afcasiancup/" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                    <a href="https://m.youtube.com/AFCAsianCup?fbclid=PAY2xjawJhN_RleHRuA2FlbQIxMAABp3_rgx4Yro-u2LPQsQE5qnlZfcBjUzu-YENyJAg-SrsY_2bERETC2QGCt30p_aem_QhdrdDLfZOOWyRXA2nAcpQ" class="text-gray-400 hover:text-white"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between">
+                <p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 Konfederasi Sepak Bola Asia. Hak cipta dilindungi.</p>
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">Ketentuan</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">Privasi</a>
+                    <a href="#" class="text-gray-400 hover:text-white text-sm">Kontak</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
