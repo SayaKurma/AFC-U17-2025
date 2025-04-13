@@ -50,7 +50,7 @@ const matches = [
         team1: { name: 'Jepang', flag: 'https://flagcdn.com/w20/jp.png', score: 4 },
         team2: { name: 'UEA', flag: 'https://flagcdn.com/w20/ae.png', score: 1 },
         location: 'Stadion Olahraga Kota Raja Fahd, Taif',
-        details: '<strong>Jepang:</strong> Minato Yoshida (3\', 15\'), Yuito Kamo (34\'), Hiroto Asada (83\')<br><strong>UEA:</strong> Faysal was Mohammed (71\')'
+        details: '<strong>Jepang:</strong> Minato Yoshida (3\', 15\'), Yuito Kamo (34\'), Hiroto Asada (83\')<br><strong>UEA:</strong> Faysal Mohammed (71\')'
     },
     {
         id: 'match5',
