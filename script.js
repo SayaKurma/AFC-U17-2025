@@ -347,6 +347,7 @@ function calculateStandings() {
         groupMatches.forEach(match => {
             const team1 = h2hStandings.find(t => t.name === match.team1.name);
             const team2 = h2hStandings.find(t => t.name === match.team2.name);
+
             if (team1 && team2) {
                 team1.h2hMatches += 1;
                 team2.h2hMatches += 1;
@@ -354,6 +355,7 @@ function calculateStandings() {
                 team1.h2hGk += match.team2.score;
                 team2.h2hGm += match.team2.score;
                 team2.h2hGk += match.team1.score;
+
                 if (match.team1.score > match.team2.score) {
                     team1.h2hPts += 3;
                 } else if (match.team1.score < match.team2.score) {
@@ -371,10 +373,12 @@ function calculateStandings() {
             const h2hGdB = b.h2hGm - b.h2hGk;
             if (h2hGdB !== h2hGdA) return h2hGdB - h2hGdA;
             if (b.h2hGm !== a.h2hGm) return b.h2hGm - a.h2hGm;
+
             const directMatch = groupMatches.find(m =>
                 (m.team1.name === a.name && m.team2.name === b.name) ||
                 (m.team1.name === b.name && m.team2.name === a.name)
             );
+
             if (directMatch) {
                 const teamAIsTeam1 = directMatch.team1.name === a.name;
                 const scoreA = teamAIsTeam1 ? directMatch.team1.score : directMatch.team2.score;
@@ -383,6 +387,7 @@ function calculateStandings() {
                     return scoreB - scoreA;
                 }
             }
+
             const gdA = a.gm - a.gk;
             const gdB = b.gm - b.gk;
             return gdB - gdA;
@@ -393,10 +398,12 @@ function calculateStandings() {
         const groupMatches = matches.filter(m => m.group === groupName);
         let teams = groups[groupName];
         const pointsMap = {};
+
         teams.forEach(team => {
             if (!pointsMap[team.pts]) pointsMap[team.pts] = [];
             pointsMap[team.pts].push(team);
         });
+
         const sortedTeams = [];
         Object.keys(pointsMap).sort((a, b) => b - a).forEach(pts => {
             const teamsWithSamePoints = pointsMap[pts];
@@ -411,6 +418,7 @@ function calculateStandings() {
                 sortedTeams.push(...teamsWithSamePoints);
             }
         });
+
         groups[groupName] = sortedTeams;
     });
 
@@ -473,9 +481,11 @@ function updateQuarterFinals() {
     Object.keys(standings).forEach(groupName => {
         const teams = standings[groupName];
         const groupMatches = matches.filter(m => m.group === groupName).length;
+
         if (groupMatches === 6) {
             const winner = teams[0];
             const runnerUp = teams[1];
+
             quarterFinalMatches.forEach(match => {
                 const knockoutMatches = document.querySelectorAll('.knockout-match');
                 if (match.placeholder1 === `Juara ${groupName}`) {
@@ -491,23 +501,43 @@ function updateQuarterFinals() {
     });
 }
 
-const topscorers = [
-    { name: 'Evandra Florasta', team: 'Indonesia', flag: 'https://flagcdn.com/w20/id.png', goals: 3 },
-    { name: 'Minato Yoshida', team: 'Jepang', flag: 'https://flagcdn.com/w20/jp.png', goals: 3 },
-    { name: 'Asilbek Aliev', team: 'Uzbekistan', flag: 'https://flagcdn.com/w20/uz.png', goals: 3 },
-    { name: 'Zahaby Gholy', team: 'Indonesia', flag: 'https://flagcdn.com/w20/id.png', goals: 2 },
-    { name: 'Fadly Alberto', team: 'Indonesia', flag: 'https://flagcdn.com/w20/id.png', goals: 2 },
-    { name: 'Kim Eun-Seong', team: 'Korea Selatan', flag: 'https://flagcdn.com/w20/kr.png', goals: 3 },
-    { name: 'Pak Kwang-Song', team: 'Korea Utara', flag: 'https://flagcdn.com/w20/kp.png', goals: 2 },
-    { name: 'Ri Kang-Rim', team: 'Korea Utara', flag: 'https://flagcdn.com/w20/kp.png', goals: 2 },
-    { name: 'Sadriddin Khasanov', team: 'Uzbekistan', flag: 'https://flagcdn.com/w20/uz.png', goals: 2 },
-    { name: 'Jamshidbek Rustamov', team: 'Uzbekistan', flag: 'https://flagcdn.com/w20/uz.png', goals: 2 },
-    { name: 'Mohammed Al-Garash', team: 'Yaman', flag: 'https://flagcdn.com/w20/ye.png', goals: 2 },
-    { name: 'Ahmed Al-Amrani', team: 'Oman', flag: 'https://flagcdn.com/w20/om.png', goals: 2 },
-    { name: 'Hoang Trong Duy Khang', team: 'Vietnam', flag: 'https://flagcdn.com/w20/vn.png', goals: 2 }
-].filter(player => player.goals >= 2);
+function calculateTopscorers() {
+    const topscorersMap = {};
 
-function generateTopscorersTable() {
+    matches.forEach(match => {
+        const details = match.details.split('<br>').map(team => team.replace(/<strong>|<\/strong>/g, ''));
+
+        details.forEach(teamDetail => {
+            const [teamName, players] = teamDetail.split(':');
+            if (!teamName || !players || players.trim() === '-') return;
+
+            const playerList = players.split(',').map(p => p.trim());
+            playerList.forEach(player => {
+                const matchResult = player.match(/(.+)\s*\((\d+\'\.*.*)\)/);
+                if (!matchResult) return;
+
+                const playerName = matchResult[1].trim();
+                const goals = matchResult[2].split(',').length; // Count goals based on timestamps
+
+                const team = teamName.trim();
+                const flag = match.team1.name === team ? match.team1.flag : match.team2.flag;
+
+                if (!topscorersMap[playerName]) {
+                    topscorersMap[playerName] = { name: playerName, team, flag, goals: 0 };
+                }
+                topscorersMap[playerName].goals += goals;
+            });
+        });
+    });
+
+    const topscorers = Object.values(topscorersMap)
+        .filter(player => player.goals >= 2)
+        .sort((a, b) => b.goals - a.goals || a.name.localeCompare(b.name));
+
+    return topscorers;
+}
+
+function generateTopscorersTable(topscorers) {
     return `
         <table class="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow-md">
             <thead class="bg-gray-100">
@@ -533,8 +563,9 @@ function generateTopscorersTable() {
 }
 
 function displayTopscorers() {
+    const topscorers = calculateTopscorers();
     const topscorersContainer = document.getElementById('topscorers-table');
-    topscorersContainer.innerHTML = generateTopscorersTable();
+    topscorersContainer.innerHTML = generateTopscorersTable(topscorers);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
