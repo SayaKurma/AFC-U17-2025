@@ -50,7 +50,7 @@ const matches = [
         team1: { name: 'Jepang', flag: 'https://flagcdn.com/w20/jp.png', score: 4 },
         team2: { name: 'UEA', flag: 'https://flagcdn.com/w20/ae.png', score: 1 },
         location: 'Stadion Olahraga Kota Raja Fahd, Taif',
-        details: '<strong>Jepang:</strong> Minato Yoshida (3\', 15\'), Yuito Kamo (34\'), Hiroto Asada (83\')<br><strong>UEA:</strong> Faysal Mohammed (71\')'
+        details: '<strong>Jepang:</strong> Minato Yoshida (3\', 15\'), Yuito Kamo (34\'), Hiroto Asada (83\')<br><strong>UEA:</strong> Faysal was Mohammed (71\')'
     },
     {
         id: 'match5',
@@ -231,6 +231,15 @@ const matches = [
         team2: { name: 'Korea Utara', flag: 'https://flagcdn.com/w20/kp.png', score: 2 },
         location: 'Stadion Kota Olahraga Raja Abdullah, Jeddah',
         details: '<strong>Oman:</strong> Osama Al-Mamari (65\'), Alwalid Salam (90+8\')<br><strong>Korea Utara:</strong> Kim Yu-Jin (10\'), Ri Kang-Rim (74\')'
+    },
+    {
+        id: 'match25',
+        group: 'Perempat Final',
+        date: '13 April',
+        team1: { name: 'Jepang', flag: 'https://flagcdn.com/w20/jp.png', score: 2 },
+        team2: { name: 'Arab Saudi', flag: 'https://flagcdn.com/w20/sa.png', score: 2 },
+        location: 'Stadion Klub Olahraga Okadh, Taif',
+        details: '<strong>Jepang:</strong> Taiga Seguchi (9\'), Hiroto Asada (72\')<br><strong>Arab Saudi:</strong> Abubaker Abdelrahman Saeed (17\'), Sabri Dahal (37\')<br><strong>Adu Penalti:</strong> Jepang 2 - 3 Arab Saudi'
     }
 ];
 
@@ -239,7 +248,7 @@ function generateMatchCard(match) {
         <div class="match-card bg-white p-4 rounded-lg border border-gray-200 shadow-sm" onclick="toggleDetails('${match.id}')">
             <div class="flex justify-between items-center mb-2">
                 <div class="text-xs text-gray-500">${match.group} • ${match.date}</div>
-                <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">FT</div>
+                <div class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">${match.group === 'Perempat Final' && match.team1.score === match.team2.score ? 'AET' : 'FT'}</div>
             </div>
             <div class="flex justify-between items-center">
                 <div class="flex items-center"><img src="${match.team1.flag}" class="flag-icon" alt="${match.team1.name}">${match.team1.name}</div>
@@ -307,7 +316,7 @@ function calculateStandings() {
         ]
     };
 
-    matches.forEach(match => {
+    matches.filter(match => match.group.startsWith('Grup')).forEach(match => {
         const group = groups[match.group];
         const team1 = group.find(t => t.name === match.team1.name);
         const team2 = group.find(t => t.name === match.team2.name);
@@ -469,14 +478,16 @@ function displayGroupTables() {
     ).join('');
 }
 
-function updateQuarterFinals() {
+function updateKnockoutStage() {
     const standings = calculateStandings();
     const quarterFinalMatches = [
-        { placeholder1: 'Juara Grup A', placeholder2: 'Runner-up Grup B', index: 0 },
-        { placeholder1: 'Juara Grup C', placeholder2: 'Runner-up Grup D', index: 1 },
-        { placeholder1: 'Juara Grup B', placeholder2: 'Runner-up Grup A', index: 2 },
-        { placeholder1: 'Juara Grup D', placeholder2: 'Runner-up Grup C', index: 3 }
+        { placeholder1: 'Juara Grup A', placeholder2: 'Runner-up Grup B', index: 0, date: '13 April, 17:00' },
+        { placeholder1: 'Juara Grup C', placeholder2: 'Runner-up Grup D', index: 1, date: '14 April, 17:00' },
+        { placeholder1: 'Juara Grup B', placeholder2: 'Runner-up Grup A', index: 2, date: '13 April, 20:15' },
+        { placeholder1: 'Juara Grup D', placeholder2: 'Runner-up Grup C', index: 3, date: '14 April, 20:15' }
     ];
+
+    const knockoutMatches = document.querySelectorAll('.knockout-match');
 
     Object.keys(standings).forEach(groupName => {
         const teams = standings[groupName];
@@ -487,7 +498,6 @@ function updateQuarterFinals() {
             const runnerUp = teams[1];
 
             quarterFinalMatches.forEach(match => {
-                const knockoutMatches = document.querySelectorAll('.knockout-match');
                 if (match.placeholder1 === `Juara ${groupName}`) {
                     const matchElement = knockoutMatches[match.index].querySelectorAll('.flex')[0];
                     matchElement.innerHTML = `<img src="${winner.flag}" class="flag-icon" alt="${winner.name}">${winner.name}`;
@@ -499,45 +509,38 @@ function updateQuarterFinals() {
             });
         }
     });
-}
 
-function calculateTopscorers() {
-    const topscorersMap = {};
+    const quarterFinalResults = [
+        { matchId: 'match25', winner: 'Arab Saudi', flag: 'https://flagcdn.com/w20/sa.png', index: 2 }
+    ];
 
-    matches.forEach(match => {
-        const details = match.details.split('<br>').map(team => team.replace(/<strong>|<\/strong>/g, ''));
-
-        details.forEach(teamDetail => {
-            const [teamName, players] = teamDetail.split(':');
-            if (!teamName || !players || players.trim() === '-') return;
-
-            const playerList = players.split(',').map(p => p.trim());
-            playerList.forEach(player => {
-                const matchResult = player.match(/(.+)\s*\((\d+\'\.*.*)\)/);
-                if (!matchResult) return;
-
-                const playerName = matchResult[1].trim();
-                const goals = matchResult[2].split(',').length; // Count goals based on timestamps
-
-                const team = teamName.trim();
-                const flag = match.team1.name === team ? match.team1.flag : match.team2.flag;
-
-                if (!topscorersMap[playerName]) {
-                    topscorersMap[playerName] = { name: playerName, team, flag, goals: 0 };
-                }
-                topscorersMap[playerName].goals += goals;
-            });
-        });
+    quarterFinalResults.forEach(result => {
+        const semiFinalMatches = document.querySelectorAll('.knockout-round:nth-child(2) .knockout-match');
+        if (result.matchId === 'match25') {
+            const semiFinalElement = semiFinalMatches[1].querySelectorAll('.flex')[0]; // Assuming PF3 winner goes to SF2
+            semiFinalElement.innerHTML = `<img src="${result.flag}" class="flag-icon" alt="${result.winner}">${result.winner}`;
+        }
     });
-
-    const topscorers = Object.values(topscorersMap)
-        .filter(player => player.goals >= 2)
-        .sort((a, b) => b.goals - a.goals || a.name.localeCompare(b.name));
-
-    return topscorers;
 }
 
-function generateTopscorersTable(topscorers) {
+const topscorers = [
+    { name: 'Evandra Florasta', team: 'Indonesia', flag: 'https://flagcdn.com/w20/id.png', goals: 3 },
+    { name: 'Minato Yoshida', team: 'Jepang', flag: 'https://flagcdn.com/w20/jp.png', goals: 3 },
+    { name: 'Asilbek Aliev', team: 'Uzbekistan', flag: 'https://flagcdn.com/w20/uz.png', goals: 3 },
+    { name: 'Kim Eun-Seong', team: 'Korea Selatan', flag: 'https://flagcdn.com/w20/kr.png', goals: 3 },
+    { name: 'Zahaby Gholy', team: 'Indonesia', flag: 'https://flagcdn.com/w20/id.png', goals: 2 },
+    { name: 'Fadly Alberto', team: 'Indonesia', flag: 'https://flagcdn.com/w20/id.png', goals: 2 },
+    { name: 'Pak Kwang-Song', team: 'Korea Utara', flag: 'https://flagcdn.com/w20/kp.png', goals: 2 },
+    { name: 'Ri Kang-Rim', team: 'Korea Utara', flag: 'https://flagcdn.com/w20/kp.png', goals: 2 },
+    { name: 'Sadriddin Khasanov', team: 'Uzbekistan', flag: 'https://flagcdn.com/w20/uz.png', goals: 2 },
+    { name: 'Jamshidbek Rustamov', team: 'Uzbekistan', flag: 'https://flagcdn.com/w20/uz.png', goals: 2 },
+    { name: 'Mohammed Al-Garash', team: 'Yaman', flag: 'https://flagcdn.com/w20/ye.png', goals: 2 },
+    { name: 'Ahmed Al-Amrani', team: 'Oman', flag: 'https://flagcdn.com/w20/om.png', goals: 2 },
+    { name: 'Hoang Trong Duy Khang', team: 'Vietnam', flag: 'https://flagcdn.com/w20/vn.png', goals: 2 },
+    { name: 'Sabri Dahal', team: 'Arab Saudi', flag: 'https://flagcdn.com/w20/sa.png', goals: 2 }
+].filter(player => player.goals >= 2);
+
+function generateTopscorersTable() {
     return `
         <table class="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow-md">
             <thead class="bg-gray-100">
@@ -563,14 +566,13 @@ function generateTopscorersTable(topscorers) {
 }
 
 function displayTopscorers() {
-    const topscorers = calculateTopscorers();
     const topscorersContainer = document.getElementById('topscorers-table');
-    topscorersContainer.innerHTML = generateTopscorersTable(topscorers);
+    topscorersContainer.innerHTML = generateTopscorersTable();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     displayRecentMatches();
     displayGroupTables();
-    updateQuarterFinals();
+    updateKnockoutStage();
     displayTopscorers();
 });
